@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Prediction Result{% endblock %}
+
+{% block head %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <style>
+        .benign {
+            color: green;
+        }
+        .malignant {
+            color: red;
+        }
+        #prediction {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5" id="prediction">
+        <h2 class="text-center mb-4">Prediction Result</h2>
+        
+        {% if prediction %}
+            <h4>User Information</h4>
+            <p><strong>Name:</strong> {{ prediction.user.name }}</p>
+            <p><strong>UID:</strong> {{ prediction.user.UID }}</p>
+            <p><strong>Email:</strong> {{ prediction.user.email }}</p>
+            <p><strong>Address:</strong> {{ prediction.user.address }}</p>
+            <p><strong>Phone Number:</strong> {{ prediction.user.phone }}</p>
+
+            <h4 class="mt-4">Uploaded Image:</h4>
+            <img src="{{ prediction.uploaded_image.url }}" alt="Uploaded Image" class="img-fluid mb-3" style="border-radius: 10px;">
+
+            {% if prediction.result == 'Benign' %}
+                <p class="benign"><strong>{{ prediction.result }} (non-cancerous)</strong></p>
+                <p class="green">{{ message }}</p>
+            {% elif prediction.result == 'Malignant' %}
+                <p class="malignant"><strong>{{ prediction.result }} (cancerous)</strong></p>
+                <p class="red">{{ message }}</p>
+            {% endif %}
+        {% else %}
+            <p>No prediction available. Please upload an image for analysis.</p>
+        {% endif %}
+        
+        <a href="{% url 'prediction:predict_image' %}" class="btn btn-primary mt-3">Upload Another Image</a>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="//code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}

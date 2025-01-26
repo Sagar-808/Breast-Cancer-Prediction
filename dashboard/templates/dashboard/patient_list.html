@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Patient List{% endblock %}
+
+{% block content %}
+<div class="container mt-4 card p-3 shadow-lg">
+    <h2 class="text-center mb-4">Patient List</h2>
+    <div class="d-flex justify-content-end">
+        {% if messages %}
+            <div class="mt-3" style="max-width: 500px;">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" style="padding: 5px; font-size: 18px;">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <!-- Search Form -->
+    <div class="mx-auto col-6">
+        <form method="get">
+            <div class="mb-3">
+                <label for="search-patients" class="form-label">Search Patient</label>
+                <input placeholder="Enter Name" name="search" type="text" class="form-control" value="{{ search_query }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{% url 'dashboard:patient-data' %}" class="btn btn-primary">Add New Patient</a>
+        </form>
+    </div>
+
+    <!-- Patient Table -->
+    <div class="container mt-2">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        <a href="?sort=name&order={% if sort_by == 'name' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ search_query }}">
+                            Name
+                            {% if sort_by == 'name' %}
+                                {% if order == 'asc' %}&#9650;{% else %}&#9660;{% endif %}
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th scope="col">
+                        <a href="?sort=uId&order={% if sort_by == 'uId' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ search_query }}">
+                            Patient ID
+                            {% if sort_by == 'uId' %}
+                                {% if order == 'asc' %}&#9650;{% else %}&#9660;{% endif %}
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Profile Image</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.uId }}</td>
+                    <td>{{ patient.address }}</td>
+                    <td>{{ patient.phone }}</td>
+                    <td>
+                        {% if patient.picture %}
+                        <a href="{% url 'dashboard:patient_profile' patient.uId %}">
+                            <img src="{{ patient.picture.url }}" alt="{{ patient.name }}" class="img-fluid rounded-circle" style="width: 50px; height: 50px;">
+                        </a>
+                        {% else %}
+                        No Image
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'dashboard:update-patient' patient.id %}" class="btn btn-success">Update</a>
+                        <a href="{% url 'dashboard:delete-patient' patient.id %}" class="btn btn-danger">Delete</a>
+
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No patients found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if patients.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1&sort={{ sort_by }}&order={{ order }}&search={{ search_query }}">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ patients.previous_page_number }}&sort={{ sort_by }}&order={{ order }}&search={{ search_query }}">Previous</a>
+            </li>
+            {% endif %}
+
+            {% for num in patients.paginator.page_range %}
+                {% if patients.number == num %}
+                <li class="page-item active">
+                    <a class="page-link" href="#">{{ num }}</a>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}&sort={{ sort_by }}&order={{ order }}&search={{ search_query }}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if patients.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ patients.next_page_number }}&sort={{ sort_by }}&order={{ order }}&search={{ search_query }}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ patients.paginator.num_pages }}&sort={{ sort_by }}&order={{ order }}&search={{ search_query }}">Last</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

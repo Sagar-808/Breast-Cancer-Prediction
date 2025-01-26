@@ -1,0 +1,136 @@
+Global Styles
+
+body {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+/* Sidebar Styles */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: #4e54c8;
+    color: white;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar.collapsed ul li a {
+    justify-content: center; /* Center icons when collapsed */
+}
+
+.sidebar.collapsed ul li a span {
+    display: none; /* Hide text when collapsed */
+}
+
+.sidebar.collapsed ul li a i {
+    margin-right: 0; /* Remove margin to center icon */
+}
+
+.sidebar-header {
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar ul li:hover {
+    background-color: #5a5dc8;
+    cursor: pointer;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar ul li a i {
+    font-size: 18px;
+    margin-right: 15px;
+}
+
+.toggle-sidebar-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+/* Main Content Styles */
+
+.main-content {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+    flex: 1;
+    background: #f5f6fa;
+    padding: 20px;
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: 70px;
+}
+
+/* Header Styles */
+
+header {
+    background: white;
+    padding: 15px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-links {
+    align-items: center;
+}
+
+.dropdown-menu {
+    min-width: 200px;
+}
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 70px;
+    }
+
+    .main-content {
+        margin-left: 70px;
+    }
+}
+

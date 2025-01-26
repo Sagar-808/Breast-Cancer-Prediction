@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Prediction List{% endblock %}
+
+{% block content %}
+<div class="container mt-3 card p-3 shadow-lg">
+
+    <div class="d-flex justify-content-end">
+        {% if messages %}
+            <div class="mt-3" style="max-width: 500px;">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" style="padding: 5px; font-size: 12px;">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <h2 class="text-center mb-4">Prediction List</h2>
+    <div class="container mt-3">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        <a href="?sort=id&order={% if sort_by == 'id' and order == 'asc' %}desc{% else %}asc{% endif %}">
+                            Prediction ID
+                            {% if sort_by == 'id' %}
+                                {% if order == 'asc' %}
+                                    &#9650; <!-- Up arrow for ascending -->
+                                {% else %}
+                                    &#9660; <!-- Down arrow for descending -->
+                                {% endif %}
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th scope="col">
+                        <a href="?sort=patient__name&order={% if sort_by == 'patient__name' and order == 'asc' %}desc{% else %}asc{% endif %}">
+                            Patient Name
+                            {% if sort_by == 'patient__name' %}
+                                {% if order == 'asc' %}
+                                    &#9650;
+                                {% else %}
+                                    &#9660;
+                                {% endif %}
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th scope="col">Uploaded Image</th>
+                    <th scope="col">
+                        <a href="?sort=result&order={% if sort_by == 'result' and order == 'asc' %}desc{% else %}asc{% endif %}">
+                            Result
+                            {% if sort_by == 'result' %}
+                                {% if order == 'asc' %}
+                                    &#9650;
+                                {% else %}
+                                    &#9660;
+                                {% endif %}
+                            {% endif %}
+                        </a>
+                    </th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prediction in predictions %}
+                    <tr>
+                        <td>{{ prediction.id }}</td>
+                        <td>{{ prediction.patient.name }}</td> <!-- Display patient name -->
+                        <td>
+                            <img src="{{ prediction.uploaded_image.url }}" alt="Uploaded Image" class="img-fluid" style="width: 50px; height: 50px;">
+                        </td>
+                        <td>{{ prediction.result }}</td>
+                        <td>
+                            <a href="{% url 'prediction:result' prediction.id %}" class="btn btn-primary">View</a>
+                            <a href="/delete-prediction/{{ prediction.id }}" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No predictions found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Pagination -->
+    <nav aria-label="Page navigation example" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if predictions.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ predictions.previous_page_number }}&sort={{ sort_by }}&order={{ order }}">Previous</a>
+                </li>
+            {% endif %}
+            {% for num in predictions.paginator.page_range %}
+                <li class="page-item {% if predictions.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}&sort={{ sort_by }}&order={{ order }}">{{ num }}</a>
+                </li>
+            {% endfor %}
+            {% if predictions.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ predictions.next_page_number }}&sort={{ sort_by }}&order={{ order }}">Next</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

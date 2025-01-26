@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Prediction Result{% endblock %}
+
+{% block head %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <style>
+        .benign {
+            color: green;
+        }
+        .malignant {
+            color: red;
+        }
+        #prediction {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .image-container {
+            width: 100%;
+            max-width: 225px; /* Adjust this value to set the maximum width */
+            height: auto;
+            display: inline-block;
+            margin: 0 auto;
+        }
+        .image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5" id="prediction">
+        {% if prediction %}
+            <h2 class="text-center mb-4">Prediction Result</h2>
+
+            <!-- Patient Details -->
+            <div class="row">
+                <div class="col-md-6 text-center align-items-center">
+                    <h4 class="mt-4">Uploaded Image:</h4>
+                    <div class="image-container">
+                        <img src="{{ prediction.uploaded_image.url }}" alt="Uploaded Image">
+                    </div>
+                    
+                    <p class="mt-4"><strong>Conversion Size:</strong> 32x32 pixels</p>
+                    <h4 class="mt-4">Processed Image:</h4>
+                    <div class="image-container">
+                        <img src="{{ prediction.processed_image.url }}" alt="Processed Image">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="mt-4">Prediction Report</h4>
+                    {% if prediction.result == 'Benign' %}
+                        <p class="benign"><strong>Report: {{ prediction.result }} (non-cancerous)</strong></p>
+                        <p class="green">{{ message }}</p>
+                    {% elif prediction.result == 'Malignant' %}
+                        <p class="malignant"><strong>Report: {{ prediction.result }} (cancerous)</strong></p>
+                        <p class="red">{{ message }}</p>
+                    {% endif %}
+
+                    <h4 class="mt-4">Test Results</h4>
+                    <p><strong>Test Accuracy:</strong> 94.82%</p>
+                    <h5>Confusion Matrix:</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Predicted Benign</th>
+                                <th>Predicted Malignant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Actual Benign</td><td>1068</td><td>123</td></tr>
+                            <tr><td>Actual Malignant</td><td>13</td><td>1422</td></tr>
+                        </tbody>
+                    </table>
+                    <h5>Classification Report:</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1-score</th>
+                                <th>Support</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Benign</td><td>0.99</td><td>0.90</td><td>0.94</td><td>1191</td></tr>
+                            <tr><td>Malignant</td><td>0.92</td><td>0.99</td><td>0.95</td><td>1435</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="{% url 'prediction:predict_image' prediction.patient.uId %}" class="btn btn-primary mt-3">Upload Another Image</a>
+                <a href="{% url 'dashboard:patient_profile' prediction.patient.uId %}" class="btn btn-success mt-3">Goto Profile</a>
+            </div>
+        {% else %}
+            <p>No prediction available. Please upload an image for analysis.</p>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="//code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}

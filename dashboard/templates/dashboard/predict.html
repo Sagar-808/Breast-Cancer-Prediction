@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Breast Cancer Prediction{% endblock %}
+
+{% block head %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+      <link
+            rel="stylesheet"
+            href="{% static 'prediction/css/predict.css' %}"
+        />
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        
+        <!-- User Details Form -->
+        {% if not user_info_submitted %}
+        <form method="POST" enctype="multipart/form-data" action="{% url 'prediction:predict_image' %}" class="border p-4 rounded shadow mb-4">
+            {% csrf_token %}
+            <h4>User Information</h4>
+            <div class="form-group">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" id="name" name="name" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="uid" class="form-label">UID:</label>
+                <input type="number" id="uid" name="UID" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" id="email" name="email" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="address" class="form-label">Address:</label>
+                <textarea id="address" name="address" required class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="phone" class="form-label">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="picture" class="form-label">Upload Your Picture:</label>
+                <input type="file" id="picture" name="picture" accept=".jpg,.jpeg,.png" required class="form-control-file">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block mt-3">Submit User Info</button>
+        </form>
+        {% else %}
+        <!-- Image Upload Form -->
+        <h4>Image Upload for Prediction</h4>
+        <form method="POST" enctype="multipart/form-data" action="{% url 'prediction:predict_image' %}" class="border p-4 rounded shadow mb-4">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="image" class="form-label">Upload an Image for Prediction:</label>
+                <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png" required class="form-control-file">
+            </div>
+            <div class="preview mt-3" id="image-preview">
+                <p>No image uploaded yet</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block mt-3">Predict</button>
+        </form>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="//code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript for Image Preview -->
+    <script>
+        document.getElementById('image').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('image-preview');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = '<img src="' + e.target.result + '" alt="Image Preview" class="img-fluid"/>';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '<p>No image uploaded yet</p>';
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Home{% endblock %}
+
+{% block content %}
+<div class="container mt-5 card p-3 shadow-lg">
+    <div class="d-flex justify-content-end">
+        {% if messages %}
+            <div class="mt-3" style="max-width: 500px;">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" style="padding: 5px; font-size: 18px;">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <h3 class="text-center mb-4">Breast Cancer Prediction System</h3>
+    <br>
+
+    <div class="row">
+        <!-- Left Section: Total Counts -->
+        <div class="col-md-4">
+            <div class="card mb-2 p-2 shadow count-card" onclick="redirectTo('patients')" style="cursor: pointer;">
+                <h6>Total Patients</h6>
+                <h3 class="text-primary text-center">{{ total_patients }}</h3>
+            </div>
+            <div class="card mb-2 p-2 shadow count-card" onclick="redirectTo('predictions')" style="cursor: pointer;">
+                <h6>Total Predictions</h6>
+                <h3 class="text-success text-center">{{ total_predictions }}</h3>
+            </div>
+            <div class="card mb-2 p-2 shadow count-card" onclick="redirectTo('benign')" style="cursor: pointer;">
+                <h6>Total Benign Cases</h6>
+                <h3 class="text-warning text-center">{{ benign_count }}</h3>
+            </div>
+            <div class="card mb-2 p-2 shadow count-card" onclick="redirectTo('malignant')" style="cursor: pointer;">
+                <h6>Total Malignant Cases</h6>
+                <h3 class="text-danger text-center">{{ malignant_count }}</h3>
+            </div>
+        </div>
+
+        <!-- Right Section: Pie Chart -->
+        <div class="col-md-5">
+            <div class="card p-3 shadow">
+                <h6 class="text-center">Prediction Results Distribution</h6>
+                <div style="width: 80%; margin: 0 auto;">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Redirect Function for Total Counts
+        function redirectTo(route) {
+            if (route === 'patients') {
+                window.location.href = '/patients/';
+            } else if (route === 'predictions') {
+                window.location.href = '/predictions/';
+            } else if (route === 'benign') {
+                window.location.href = '/benign-cases/';
+            } else if (route === 'malignant') {
+                window.location.href = '/malignant-cases/';
+            }
+        }
+
+        // Pie Chart Data and Configuration
+        const ctx = document.getElementById('resultsChart').getContext('2d');
+        const resultsChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Benign', 'Malignant'],
+                datasets: [{
+                    data: [{{ benign_count }}, {{ malignant_count }}],
+                    backgroundColor: [
+                        'rgba(48, 87, 230, 1)', // Blue for Benign
+                        'rgba(232, 35, 64, 1)'  // Orange for Malignant
+                    ],
+                    hoverBackgroundColor: [
+                        'rgb(3, 55, 240)',   // Darker Blue on hover
+                        'rgba(242, 7, 42, 1)'    // Darker Orange on hover
+                    ],
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            }
+        });
+    </script>
+    <style>
+        /* Hover Effect for Cards */
+        .count-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .count-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+{% endblock %}
