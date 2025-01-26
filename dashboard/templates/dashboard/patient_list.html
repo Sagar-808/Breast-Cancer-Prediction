@@ -50,7 +50,7 @@
                     </th>
                     <th scope="col">Address</th>
                     <th scope="col">Phone</th>
-                    <th scope="col">Profile Image</th>
+                    <th scope="col">Profile</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -70,11 +70,14 @@
                         No Image
                         {% endif %}
                     </td>
-                    <td>
+                   <td>
                         <a href="{% url 'dashboard:update-patient' patient.id %}" class="btn btn-success">Update</a>
-                        <a href="{% url 'dashboard:delete-patient' patient.id %}" class="btn btn-danger">Delete</a>
-
+                        <form action="{% url 'dashboard:delete-patient' patient.uId %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>

@@ -62,9 +62,9 @@
             } else if (route === 'predictions') {
                 window.location.href = '/predictions/';
             } else if (route === 'benign') {
-                window.location.href = '/benign-cases/';
+                window.location.href = '/predictions/?sort=result&order=asc&search=Benign';
             } else if (route === 'malignant') {
-                window.location.href = '/malignant-cases/';
+                window.location.href = '/predictions/?sort=result&order=asc&search=Malignant';
             }
         }
 

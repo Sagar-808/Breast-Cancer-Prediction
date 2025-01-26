@@ -265,17 +265,22 @@ def patient_data(request):
 def delete(request, uId):
     # Ensure the request is valid and includes the user context
     if request.method == "POST":  # Confirm the delete action is via POST for safety
-        # Get the object or return a 404 if it doesn't exist
-        patient = get_object_or_404(Patient, uId=uId)
-        # Delete the patient record
-        patient.delete()
+        try:
+            # Get the object or return a 404 if it doesn't exist
+            patient = get_object_or_404(Patient, uId=uId)
+            # Delete the patient record
+            patient.delete()
+            # Show success message
+            messages.success(request, f"Patient with ID {uId} deleted successfully.")
+        except Exception as e:
+            # Show error message if deletion fails
+            messages.error(request, f"Failed to delete patient: {e}")
+        
         # Redirect to the patients list page
         return redirect("dashboard:patient-list")  # Use your named URL
     else:
         # Return a 405 Method Not Allowed for non-POST requests
         return redirect("dashboard:patient-list")
-
-
 
 
 @login_required
