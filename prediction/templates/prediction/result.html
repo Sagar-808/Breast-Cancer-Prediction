@@ -37,7 +37,7 @@
 {% block content %}
     <div class="container mt-5" id="prediction">
         {% if prediction %}
-            <h2 class="text-center mb-4">Prediction Result</h2>
+            <h2 class="text-center mb-4" >Result</h2>
 
             <!-- Patient Details -->
             <div class="row">
@@ -54,7 +54,11 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <h4 class="mt-4">Prediction Report</h4>
+                    
+                    <h4 class="mt-2">Prediction Report</h4>
+                    <p><strong>Name:</strong> {{ prediction.patient.name }}</p>
+                    <p><strong>Age:</strong> {{ prediction.patient.age }}</p>
+                    <p><strong>Gender:</strong> {{ prediction.patient.sex }}</p>
                     {% if prediction.result == 'Benign' %}
                         <p class="benign"><strong>Report: {{ prediction.result }} (non-cancerous)</strong></p>
                         <p class="green">{{ message }}</p>
@@ -62,10 +66,10 @@
                         <p class="malignant"><strong>Report: {{ prediction.result }} (cancerous)</strong></p>
                         <p class="red">{{ message }}</p>
                     {% endif %}
+                    <hr style="width: 100%; border: 1px solid rgb(150, 150, 150); margin-top: 20px; margin-bottom: 20px;">
 
-                    <h4 class="mt-4">Test Results</h4>
-                    <p><strong>Test Accuracy:</strong> 94.82%</p>
-                    <h5>Confusion Matrix:</h5>
+                    <h5>Model Accuracy: 94.82%</h5>
+                    <h5 >Confusion Matrix:</h5>
                     <table class="table table-striped">
                         <thead>
                             <tr>

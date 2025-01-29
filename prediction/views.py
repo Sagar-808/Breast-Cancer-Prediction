@@ -8,7 +8,7 @@ import joblib
 from PIL import Image
 import numpy as np
 
-# Load SVM model
+# Load the trained SVM model
 model_path = os.path.join(settings.BASE_DIR, 'prediction', 'svm_model.pkl')
 clf = joblib.load(model_path)
 

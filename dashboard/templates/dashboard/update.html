@@ -3,7 +3,7 @@
 {% block title %}Update Patient{% endblock %}
 
 {% block content %}
-<div class="container mt-5 card p-3 shadow-lg">
+<div class="container-sm mt-5 card p-3 shadow-lg">
     <h2 class="text-center mb-4">Update Patient Details</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -11,7 +11,17 @@
             <label for="name" class="form-label">Name</label>
             <input name="name" type="text" class="form-control" value="{{ patient.name }}">
         </div>
-
+        <div class="form-group">
+            <label for="age" class="form-label">Age</label>
+            <input name="age" type="number" required class="form-control" value = "{{ patient.age }}">
+        </div>
+        <div class="form-group">
+            <label for="sex" class="form-label">Gender</label>
+            <select name="sex" class="form-control">
+                <option value="Male">Male</option>
+                <option value="Female" selected>Female</option>
+            </select>
+        </div>
         <div class="mb-3">
             <label for="uId" class="form-label">Patient ID</label>
             <input name="uId" type="text" class="form-control" value="{{ patient.uId }}" readonly>

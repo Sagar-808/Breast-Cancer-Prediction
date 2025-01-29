@@ -24,6 +24,8 @@ def add_patient(request):
 
         # Extract form data
         name = request.POST.get('name')
+        age= request.POST.get('age')
+        sex = request.POST.get('sex')
         uid = request.POST.get('uId')  # Corrected field name
         email = request.POST.get('email')
         address = request.POST.get('address')
@@ -42,6 +44,8 @@ def add_patient(request):
         try:
             patient = Patient(
                 name=name,
+                age=age,
+                sex=sex,
                 uId=uid,
                 email=email,
                 address=address,
@@ -73,6 +77,7 @@ def patient_profile(request, patient_id):
     patient = Patient.objects.get(uId=patient_id)
     predictions = Prediction.objects.filter(patient=patient).order_by('-id')
 
+    total_predictions = predictions.count()
     # Add pagination
     paginator = Paginator(predictions, 5)  # 4 items per page
     page_number = request.GET.get('page')
@@ -81,6 +86,7 @@ def patient_profile(request, patient_id):
     context = {
         'patient': patient,
         'predictions': page_obj,  # Pass the page object instead of the full list
+        'total_predictions': total_predictions,
     }
     return render(request, 'dashboard/patient_profile.html', context)
 @login_required
@@ -99,7 +105,7 @@ def prediction_list(request):
     predictions = Prediction.objects.select_related('patient').all().order_by(sort_field)
 
     # Paginate predictions
-    paginator = Paginator(predictions, 7)  # 10 items per page
+    paginator = Paginator(predictions, 7)  
     page_number = request.GET.get('page')  # Current page
     page_obj = paginator.get_page(page_number)
 
@@ -150,7 +156,6 @@ def logout_page(request):
     logout(request)
     messages.info(request,'Logout successful.')
     return redirect("/login/")
-
 def register(request):
     if request.method == "POST":
         data = request.POST
@@ -158,9 +163,15 @@ def register(request):
         last_name = data.get('last_name')
         username = data.get('username')
         password = data.get('password')
+        verification_code = data.get('verification_code')
+        
+        # Check if the verification code is valid
+        if verification_code != 'astro-wiz':
+            messages.error(request, "Invalid verification code.")
+            return redirect('/register/')
         
         if User.objects.filter(username=username).exists():
-            messages.error(request,"Username already taken.")
+            messages.error(request, "Username already taken.")
             return redirect('/register/')
         
         user = User.objects.create(
@@ -171,12 +182,16 @@ def register(request):
         user.set_password(password)
         user.save()
 
-        messages.success(request,"User successfully created.")
-        return redirect('/login/')  # Redirect to login after successful registration
+        # Log in the user after successful registration
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, "User successfully created and logged in.")
+            return redirect('/')  # Redirect to the home page after login
+        else:
+            messages.error(request, "Failed to log in after registration.")
+            return redirect('/login/')
 
-    if request.user.is_authenticated:
-        messages.info(request,"User Logged Out.")
-        logout(request)
     return render(request, "dashboard/register.html")
 
 
@@ -289,17 +304,22 @@ def update(request, id):
     if request.method == 'POST':
         data = request.POST
         name = data.get('name')
+        age = data.get('age')
         uId = data.get('uId')
         email = data.get('email')
         address = data.get('address')
         picture = request.FILES.get('picture')
         phone = data.get('phone')
+        sex = data.get('sex')
         
         queryset.name = name
+        queryset.age = age
+        queryset.sex = sex
         queryset.uId = uId
         queryset.email = email
         queryset.address = address
         queryset.phone = phone
+        
         
         if picture:
             queryset.picture = picture

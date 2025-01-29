@@ -68,7 +68,11 @@
                         <td>
                             <img src="{{ prediction.uploaded_image.url }}" alt="Uploaded Image" class="img-fluid" style="width: 50px; height: 50px;">
                         </td>
-                        <td>{{ prediction.result }}</td>
+                        <td >
+                            <span style="color: {% if prediction.result == 'Benign' %}green{% else %}red{% endif %};">
+                                {{ prediction.result }}
+                            </span>
+                        </td>
                         <td>
                             <a href="{% url 'prediction:result' prediction.id %}" class="btn btn-primary">View</a>
                             <a href="/delete-prediction/{{ prediction.id }}" class="btn btn-danger">Delete</a>

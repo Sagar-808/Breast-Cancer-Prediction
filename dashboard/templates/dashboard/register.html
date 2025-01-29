@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{%load static%}
 
 {% block bs %}
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -17,35 +18,45 @@
         </div>
       {% endif %}
     
+    <!-- Logo Image -->
+    <div class="text-center mb-4">
+        <img src="{% static 'prediction/img/bcps.png' %}" alt="BCPS Logo" style="max-width: 60%; height: auto;">
+    </div>
+   <form class="col-7 mx-auto container" method="post">
+    {% csrf_token %}
+    <h2>Sign Up</h2>
+    <br>
+    <div class="mb-3">
+        <label for="first_name" class="form-label">First Name</label>
+        <input name="first_name" required type="text" class="form-control">
+    </div>
 
-    <form class = "col-7 mx-auto container" method = "post" >
-        {% csrf_token %}
-        <h2>Sign Up</h2>
-        <br>
-        <div class="mb-3">
-            <label for="first_name" class="form-label">First Name</label>
-            <input name = "first_name" required type="text" class="form-control">
-        </div>
+    <div class="mb-3">
+        <label for="last_name" class="form-label">Last Name</label>
+        <input name="last_name" required type="text" class="form-control">
+    </div>
 
-        <div class="mb-3">
-            <label for="last_name" class="form-label">Last Name</label>
-            <input name = "last_name" required type="text" class="form-control">
-        </div>
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input name="username" required type="text" class="form-control">
+    </div>
 
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input name = "username" required type="text" class="form-control">
-        </div>
+    <div class="mb-3">
+        <label for="verification_code" class="form-label">Verification Code</label>
+        <input name="verification_code" required type="text" class="form-control">
+    </div>
 
-        <div class="mb-3">
+    <div class="mb-3">
         <label for="password" class="form-label">Password</label>
-        <input name = "password" required type="password" class="form-control" >
+        <input name="password" required type="password" class="form-control">
+    </div>
 
-        <div class="mt-3">
-            <p>Already have an account.<a href="/login/">Sign in</a></p>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Submit</button>
-    </form>
+    <div class="mt-3">
+        <p>Already have an account.<a href="/login/">Sign in</a></p>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+</form>
+
 </div>
 
 {% endblock %}

@@ -14,13 +14,16 @@
             </div>
         {% endif %}
     </div>
+    <!-- Logo Image -->
+    <div class="text-center mb-4">
+        <img src="{% static 'prediction/img/bcps.png' %}" alt="BCPS Logo" style="max-width: 40%; height: auto;">
+    </div>
+    {% comment %} <h3 class="text-center mb-4">Breast Cancer Prediction System</h3> {% endcomment %}
+    {% comment %} <br> {% endcomment %}
 
-    <h3 class="text-center mb-4">Breast Cancer Prediction System</h3>
-    <br>
-
-    <div class="row">
+    <div class="row ">
         <!-- Left Section: Total Counts -->
-        <div class="col-md-4">
+        <div class="col-md-4 ">
             <div class="card mb-2 p-2 shadow count-card" onclick="redirectTo('patients')" style="cursor: pointer;">
                 <h6>Total Patients</h6>
                 <h3 class="text-primary text-center">{{ total_patients }}</h3>
@@ -37,6 +40,9 @@
                 <h6>Total Malignant Cases</h6>
                 <h3 class="text-danger text-center">{{ malignant_count }}</h3>
             </div>
+            <br>
+            <br>
+            <br>
         </div>
 
         <!-- Right Section: Pie Chart -->
