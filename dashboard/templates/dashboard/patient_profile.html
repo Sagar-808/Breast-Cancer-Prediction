@@ -29,13 +29,8 @@
             <h3 class="mt-3">{{ patient.name }}</h3>
             <p><strong>Age:</strong> {{ patient.age }}</p>
             <p><strong></strong> {{ patient.sex }}</p>
-
-
         </div>
         <div class="col-md-8 mt-5">
-            {% comment %} <h3>{{ patient.name }}</h3>
-            <p><strong>Age:</strong> {{ patient.age }}</p>
-            <p><strong>Gender:</strong> {{ patient.sex }}</p> {% endcomment %}
             <p><strong>Patient ID:</strong> {{ patient.uId }}</p>
             <p><strong>Email:</strong> {{ patient.email }}</p>
             <p><strong>Phone:</strong> {{ patient.phone }}</p>
@@ -46,6 +41,33 @@
             <a href="{% url 'prediction:predict_image' patient.uId %}" class="btn btn-primary">New Prediction</a>
         </div>
     </div>
+{% comment %}     
+     <!-- Patient Status Section -->
+    <div class="container mt-5">
+        <h3 class="text-center">Patient Status</h3>
+        {% if predictions %}
+            {% with latest_prediction=predictions.object_list.first %}
+                {% if latest_prediction.result == 'Benign' %}
+                    <div class="alert alert-success text-center" role="alert">
+                        <strong>Status:</strong> Monitored Zone (Latest Prediction: Benign)
+                    </div>
+                {% elif latest_prediction.result == 'Malignant' %}
+                    <div class="alert alert-danger text-center" role="alert">
+                        <strong>Status:</strong> Danger Zone (Latest Prediction: Malignant)
+                    </div>
+                {% else %}
+                    <div class="alert alert-info text-center" role="alert">
+                        <strong>Status:</strong> Unknown (No predictions available)
+                    </div>
+                {% endif %}
+            {% endwith %}
+        {% else %}
+            <div class="alert alert-secondary text-center" role="alert">
+                <strong>Status:</strong> No predictions available yet.
+            </div>
+        {% endif %}
+    </div> {% endcomment %}
+
     <!-- Prediction History -->
     <div class="container mt-5">
         <h3 class="text-center">Prediction History</h3>

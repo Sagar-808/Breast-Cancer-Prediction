@@ -15,6 +15,7 @@ urlpatterns = [
     path("delete-patient/<int:uId>/", delete, name="delete-patient"), 
     path("update-patient/<int:id>/", update, name="update-patient"),
     path('predictions/', prediction_list, name='prediction_list'),
+    path('svm/', modelinfo, name='modelinfo'),
     path("delete-prediction/<int:prediction_id>/", delete_prediction, name="delete-prediction"),
     path("delete-prediction/<int:prediction_id>/", deletePrediction, name="delete-prediction-user"),
     

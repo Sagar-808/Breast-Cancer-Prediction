@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Model Information{% endblock %}
+
+{% block head %}
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <style>
+        .benign {
+            color: green;
+        }
+        .malignant {
+            color: red;
+        }
+        #model-info-container {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+        }
+        .data-table {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .data-table th, .data-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th {
+            background-color: #f2f2f2;
+        }
+        .key-info {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="model-info-container">
+        <h2 class="text-center mb-4">Model Information</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="mt-3">Model Performance:</h5>
+                <table class="table table-striped data-table">
+                    <tbody>
+                        <tr>
+                            <td class="key-info">Training Accuracy:</td>
+                            <td> {{ model_info.Training_Accuracy }} </td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Test Accuracy:</td>
+                            <td>{{ model_info.Test_Accuracy }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="mt-3">Hyperparameters:</h5>
+                <table class="table table-striped data-table">
+                    <tbody>
+                        <tr>
+                            <td class="key-info">Learning Rate:</td>
+                            <td>{{ model_info.Learning_Rate }}</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Lambda Parameter:</td>
+                            <td>{{ model_info.Lambda_Parameter }}</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Number of Iterations:</td>
+                            <td>{{ model_info.Number_of_Iterations }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                                <h5 class="mt-3">Data Information:</h5>
+                <table class="table table-striped data-table">
+                    <tbody>
+                        <tr>
+                            <td class="key-info">Data Source:</td>
+                            <td>[DDSM Dataset]</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Number of Images:</td>
+                            <td>[13,130 images]</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Classes:</td>
+                            <td>Benign: [X images], Malignant: [Y images]</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Image Type:</td>
+                            <td>[Mammograms]</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Preprocessing Steps:</td>
+                            <td>Resized to 32x32 pixels, Converted to grayscale</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Image Size:</td>
+                            <td>{{ model_info.Image_Size }}</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Number of Features:</td>
+                            <td>{{ model_info.Number_of_Features }}</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Number of Training Samples:</td>
+                            <td>{{ model_info.Number_of_Training_Samples }}</td>
+                        </tr>
+                        <tr>
+                            <td class="key-info">Number of Testing Samples:</td>
+                            <td>{{ model_info.Number_of_Testing_Samples }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="col-md-6">
+                <h5 class="mt-3">Confusion Matrix:</h5>
+                <table class="table table-striped data-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Predicted Benign</th>
+                            <th>Predicted Malignant</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Actual Benign</td>
+                            <td>{{ model_info.Confusion_Matrix.0.0 }}</td>
+                            <td>{{ model_info.Confusion_Matrix.0.1 }}</td>
+                        </tr>
+                        <tr>
+                            <td>Actual Malignant</td>
+                            <td>{{ model_info.Confusion_Matrix.1.0 }}</td>
+                            <td>{{ model_info.Confusion_Matrix.1.1 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5 class="mt-3">Classification Report:</h5>
+                <table class="table table-striped data-table">
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Metric</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for class_name, metrics in model_info.Classification_Report.items %}
+                            {% for metric, value in metrics.items %}
+                                <tr>
+                                    <td>{{ class_name }}</td>
+                                    <td>{{ metric }}</td>
+                                    <td>{{ value|floatformat:2  }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="//code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% endblock %}

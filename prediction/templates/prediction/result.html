@@ -31,6 +31,18 @@
             height: auto;
             border-radius: 10px;
         }
+        .progress {
+            margin-bottom: 10px;
+        }
+          /* Style for prediction list */
+        .prediction-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .prediction-list li {
+            margin-bottom: 5px;
+        }
     </style>
 {% endblock %}
 
@@ -67,40 +79,42 @@
                         <p class="red">{{ message }}</p>
                     {% endif %}
                     <hr style="width: 100%; border: 1px solid rgb(150, 150, 150); margin-top: 20px; margin-bottom: 20px;">
+                    
+                      <!-- Prediction Progress Bar -->
+                    <h4 class="mt-4">Prediction Cases</h4>
+                      
+                    <div id="predictionProgressBar">
+                         <!-- Progress bar will be rendered here by JavaScript -->
+                      </div>
 
-                    <h5>Model Accuracy: 94.82%</h5>
-                    <h5 >Confusion Matrix:</h5>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Predicted Benign</th>
-                                <th>Predicted Malignant</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Actual Benign</td><td>1068</td><td>123</td></tr>
-                            <tr><td>Actual Malignant</td><td>13</td><td>1422</td></tr>
-                        </tbody>
-                    </table>
-                    <h5>Classification Report:</h5>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Class</th>
-                                <th>Precision</th>
-                                <th>Recall</th>
-                                <th>F1-score</th>
-                                <th>Support</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>Benign</td><td>0.99</td><td>0.90</td><td>0.94</td><td>1191</td></tr>
-                            <tr><td>Malignant</td><td>0.92</td><td>0.99</td><td>0.95</td><td>1435</td></tr>
-                        </tbody>
-                    </table>
+                    <!-- Medical Progress Section -->
+                    {% if medical_progress %}
+                     <h4 class="mt-4">Medical Progress:</h4>
+                      {% if medical_progress == 'Improved' %}
+                      <p class="text-success"><strong>{{ medical_progress }}!</strong> The patient's condition has improved since the last prediction.</p>
+                      {% elif medical_progress == 'Worsened' %}
+                      <p class="text-danger"><strong>{{ medical_progress }}!</strong> The patient's condition has worsened since the last prediction.</p>
+                        {% else %}
+                        <p><strong>{{ medical_progress }}!</strong> There is no change since the last prediction.</p>
+                      {% endif %}
+                     {% else %}
+                        <p>First prediction is made. Please continue more prediction for accurate and specific medical result.</p>
+                     {% endif %}
+
+                   
                 </div>
             </div>
+              {% comment %} <!-- Previous Predictions (Right Side) -->
+              {% if previous_predictions %}
+                <h4 class="mt-4">Previous Prediction History</h4>
+                <ul class="list-group mb-4">
+                    {% for prev_prediction in previous_predictions %}
+                        <li class="list-group-item">
+                            Prediction {{ forloop.counter }} : {{prev_prediction.result}}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %} {% endcomment %}
             <div class="text-center">
                 <a href="{% url 'prediction:predict_image' prediction.patient.uId %}" class="btn btn-primary mt-3">Upload Another Image</a>
                 <a href="{% url 'dashboard:patient_profile' prediction.patient.uId %}" class="btn btn-success mt-3">Goto Profile</a>
@@ -115,4 +129,36 @@
     <script src="//code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="//stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+     <script>
+        $(document).ready(function() {
+            var predictionData = {{ prediction_data|safe }};  // Get from views
+
+            if (predictionData) {
+                // Extract benign and malignant counts
+                var benignCount = predictionData.benign_count;
+                var malignantCount =  predictionData.malignant_count;
+                var total = benignCount + malignantCount;
+
+                 var benignPercentage = (total > 0) ? (benignCount / total) * 100 : 0;
+                var malignantPercentage = (total > 0) ? (malignantCount / total) * 100 : 0;
+
+                // Create the progress bar HTML
+                var progressBarHtml = `
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: ${benignPercentage}%" aria-valuenow="${benignPercentage}" aria-valuemin="0" aria-valuemax="100">
+                            Benign: ${benignCount} (${benignPercentage.toFixed(2)}%)
+                        </div>
+                        <div class="progress-bar bg-danger" role="progressbar" style="width: ${malignantPercentage}%" aria-valuenow="${malignantPercentage}" aria-valuemin="0" aria-valuemax="100">
+                            Malignant: ${malignantCount} (${malignantPercentage.toFixed(2)}%)
+                        </div>
+                    </div>
+                `;
+
+                // Insert the progress bar into the container
+                $("#predictionProgressBar").html(progressBarHtml);
+            } else {
+                $("#predictionProgressBar").html("<p>No predictions available for this patient yet.</p>");
+            }
+        });
+    </script>
 {% endblock %}
