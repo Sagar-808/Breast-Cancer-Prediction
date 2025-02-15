@@ -41,32 +41,30 @@
             <a href="{% url 'prediction:predict_image' patient.uId %}" class="btn btn-primary">New Prediction</a>
         </div>
     </div>
-{% comment %}     
      <!-- Patient Status Section -->
     <div class="container mt-5">
         <h3 class="text-center">Patient Status</h3>
         {% if predictions %}
-            {% with latest_prediction=predictions.object_list.first %}
-                {% if latest_prediction.result == 'Benign' %}
-                    <div class="alert alert-success text-center" role="alert">
-                        <strong>Status:</strong> Monitored Zone (Latest Prediction: Benign)
-                    </div>
-                {% elif latest_prediction.result == 'Malignant' %}
-                    <div class="alert alert-danger text-center" role="alert">
-                        <strong>Status:</strong> Danger Zone (Latest Prediction: Malignant)
-                    </div>
-                {% else %}
-                    <div class="alert alert-info text-center" role="alert">
-                        <strong>Status:</strong> Unknown (No predictions available)
-                    </div>
-                {% endif %}
-            {% endwith %}
+            {% if latest.result == 'Benign' %}
+                <div class="alert alert-success text-center" role="alert">
+                    <strong>Status:</strong> Monitored Zone (Latest Prediction: Benign)
+                </div>
+            {% elif latest.result == 'Malignant' %}
+                <div class="alert alert-danger text-center" role="alert">
+                    <strong>Status:</strong> Danger Zone (Latest Prediction: Malignant)
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center" role="alert">
+                    <strong>Status:</strong> Unknown (No predictions available)
+                </div>
+            {% endif %}
+        
         {% else %}
             <div class="alert alert-secondary text-center" role="alert">
                 <strong>Status:</strong> No predictions available yet.
             </div>
         {% endif %}
-    </div> {% endcomment %}
+    </div> 
 
     <!-- Prediction History -->
     <div class="container mt-5">

@@ -72,6 +72,11 @@ def patient_profile(request, patient_id):
         patient = get_object_or_404(Patient, uId=patient_id, owner=request.user)
 
     predictions = Prediction.objects.filter(patient=patient).order_by('-id')
+    if predictions:
+        latest = Prediction.objects.filter(patient=patient).latest('id')
+        print(latest,"hello")
+    else:
+        latest = "none"
     
     # Calculate benign and malignant counts for each prediction
     for prediction in predictions:
@@ -88,6 +93,7 @@ def patient_profile(request, patient_id):
         'patient': patient,
         'predictions': page_obj,  # Pass the page object instead of the full list
         'total_predictions': total_predictions,
+        "latest":latest,
     }
     return render(request, 'dashboard/patient_profile.html', context)
 
@@ -275,7 +281,7 @@ def deletePrediction(request, prediction_id):
          prediction = get_object_or_404(Prediction, id=prediction_id, patient__owner=request.user)
     prediction.delete()
     messages.success(request, "Prediction deleted successfully.")
-    return
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required
 def profile(request):
@@ -350,15 +356,14 @@ def update(request, id):
 
 
 def modelinfo(request):
-    # Your model training code here (or load the model and its information)
-    # ...
 
-    # Hardcoded model information for demonstration purposes.  
-    #  REPLACE THIS with your actual model information
     model_info = {  
         "Model_Type": "Linear SVM",
         "Training_Accuracy": "95.12%",
         "Test_Accuracy": "94.82%",
+        "Test_Precision": 0.92,  
+        "Test_Recall": 0.99,      
+        "Test_F1_Score": 0.95,    
         "Learning_Rate": 0.001,
         "Lambda_Parameter": 0.01,
         "Number_of_Iterations": 1000,
@@ -367,16 +372,12 @@ def modelinfo(request):
         "Number_of_Training_Samples": 10502,
         "Number_of_Testing_Samples": 2626,
         "Confusion_Matrix": [[1068, 123], [13, 1422]],
-        "Classification_Report": {
-            'Benign': {'precision': 0.9879740980573543, 'recall': 0.8967254408060453, 'f1_score': 0.9401408450704225, 'support': 1191.0},
-            'Malignant': {'precision': 0.920388349514563, 'recall': 0.9909407665505227, 'f1_score': 0.9543624161073826, 'support': 1435.0}
-        },
-        "Data_Source": "DDSM Dataset", #Add this
-        "Number_of_Images": "13130", #Add this
-        "Benign_Count": "5000", #Add this
-        "Malignant_Count": "8130",#Add this
-        "Image_Type": "Mammograms", #Add this
-        "Preprocessing_Steps": "Resized to 32x32 pixels, Converted to Grayscale" #Add this
+        "Data_Source": "DDSM Dataset", 
+        "Number_of_Images": "13130", 
+        "Benign_Count": "5000", 
+        "Malignant_Count": "8130",
+        "Image_Type": "Mammograms", 
+        "Preprocessing_Steps": "Resized to 32x32 pixels, Converted to Grayscale"
     }
 
     context = {

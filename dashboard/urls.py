@@ -17,6 +17,6 @@ urlpatterns = [
     path('predictions/', prediction_list, name='prediction_list'),
     path('svm/', modelinfo, name='modelinfo'),
     path("delete-prediction/<int:prediction_id>/", delete_prediction, name="delete-prediction"),
-    path("delete-prediction/<int:prediction_id>/", deletePrediction, name="delete-prediction-user"),
+    path("delete-prediction-id/<int:prediction_id>/", deletePrediction, name="delete-prediction-user"),
     
 ]
