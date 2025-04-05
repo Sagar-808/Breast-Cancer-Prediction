@@ -63,12 +63,9 @@ def add_patient(request):
 
 @login_required
 def patient_profile(request, patient_id):
-    # Check if the user is a superuser (admin)
     if request.user.is_superuser:
-        # Admins can access any patient
         patient = get_object_or_404(Patient, uId=patient_id)
     else:
-        # Regular users can only access their own patients
         patient = get_object_or_404(Patient, uId=patient_id, owner=request.user)
 
     predictions = Prediction.objects.filter(patient=patient).order_by('-id')
@@ -78,20 +75,18 @@ def patient_profile(request, patient_id):
     else:
         latest = "none"
     
-    # Calculate benign and malignant counts for each prediction
     for prediction in predictions:
         prediction.benign_count = Prediction.objects.filter(patient=patient, result='Benign').count()
         prediction.malignant_count = Prediction.objects.filter(patient=patient, result='Malignant').count()
 
     total_predictions = predictions.count()
-    # Add pagination
-    paginator = Paginator(predictions, 5)  # 4 items per page
+    paginator = Paginator(predictions, 5)  
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
         'patient': patient,
-        'predictions': page_obj,  # Pass the page object instead of the full list
+        'predictions': page_obj,  
         'total_predictions': total_predictions,
         "latest":latest,
     }
@@ -107,11 +102,9 @@ def prediction_list(request):
     else:
         sort_field = sort_by
 
-    # Admin can view all predictions
     if request.user.is_superuser:
         predictions = Prediction.objects.select_related('patient').order_by(sort_field)
     else:
-        # Regular users can only view their own predictions
         predictions = Prediction.objects.select_related('patient').filter(patient__owner=request.user).order_by(sort_field)
 
     paginator = Paginator(predictions, 7)
@@ -205,7 +198,6 @@ def patient_list(request):
     if request.user.is_superuser:
         patients = Patient.objects.all()
     else:
-        # Regular users can only view their own patients
         patients = Patient.objects.filter(owner=request.user)
 
     if search_query:
